@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISO/IEC 27001:2022 — Compliance Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f14;
+  --surface: #13161e;
+  --surface2: #1a1e28;
+  --border: #252a38;
+  --border2: #2e3448;
+  --text: #e2ddd6;
+  --text2: #9a9690;
+  --text3: #5a5750;
+  --gold: #c9a84c;
+  --gold2: #a8893c;
+  --blue: #4a7fc1;
+  --green: #3d8f5f;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative;
+  padding: 80px 60px 72px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 30%, rgba(201,168,76,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 20% 80%, rgba(74,127,193,0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Grid lines decoration */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 420px; height: 420px;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at 80% 20%, black 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-inner { position: relative; z-index: 1; max-width: 860px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 2px;
+  padding: 5px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s ease both;
+}
+.badge-dot {
+  width: 5px; height: 5px;
+  background: var(--gold); border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 6vw, 62px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: var(--text);
+  margin-bottom: 22px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero h1 em {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: var(--text2);
+  max-width: 560px;
+  line-height: 1.75;
+  margin-bottom: 40px;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+
+.hero-stats {
+  display: flex; gap: 40px; flex-wrap: wrap;
+  margin-bottom: 48px;
+  animation: fadeUp 0.6s 0.25s ease both;
+}
+.stat {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stat-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 26px; font-weight: 500;
+  color: var(--gold);
+}
+.stat-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 2px;
+  color: var(--text3); text-transform: uppercase;
+}
+
+.hero-cta {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--gold);
+  color: #0d0f14;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; letter-spacing: 2px; font-weight: 500;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none; cursor: pointer;
+}
+.btn-primary:hover {
+  background: #d4b45e;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(201,168,76,0.25);
+}
+.btn-primary svg { transition: transform 0.2s; }
+.btn-primary:hover svg { transform: translateX(3px); }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent;
+  color: var(--text2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: 2px;
+  text-decoration: none;
+  border: 1px solid var(--border2);
+  transition: all 0.2s;
+}
+.btn-secondary:hover {
+  border-color: var(--gold2);
+  color: var(--gold);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FEATURES GRID ── */
+.section {
+  padding: 64px 60px;
+  border-bottom: 1px solid var(--border);
+  position: relative; z-index: 1;
+}
+
+.section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--text3); text-transform: uppercase;
+  margin-bottom: 36px;
+  display: flex; align-items: center; gap: 14px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; max-width: 80px;
+  height: 1px; background: var(--border2);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  max-width: 1100px;
+}
+
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px 22px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.feature-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  width: 36px; height: 36px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+.feature-icon.blue-icon {
+  background: rgba(74,127,193,0.08);
+  border-color: rgba(74,127,193,0.18);
+}
+.feature-icon.green-icon {
+  background: rgba(61,143,95,0.08);
+  border-color: rgba(61,143,95,0.18);
+}
+.feature-icon.purple-icon {
+  background: rgba(122,95,193,0.08);
+  border-color: rgba(122,95,193,0.18);
+}
+
+.feature-title {
+  font-size: 14px; font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.feature-desc {
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.65;
+}
+
+/* ── COVERAGE TABLE ── */
+.coverage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  max-width: 1100px;
+}
+
+.coverage-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 14px 16px;
+  transition: border-color 0.15s;
+}
+.coverage-item:hover { border-color: var(--border2); }
+
+.cov-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 1.5px;
+  color: var(--gold);
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 3px 9px; border-radius: 2px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.cov-num.blue { color: var(--blue); background: rgba(74,127,193,0.1); border-color: rgba(74,127,193,0.2); }
+.cov-title {
+  font-size: 13px; color: var(--text2);
+}
+
+/* ── USAGE STEPS ── */
+.steps {
+  display: flex; flex-direction: column; gap: 0;
+  max-width: 680px;
+}
+.step {
+  display: flex; gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: none; }
+
+.step-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 2px;
+  color: var(--text3);
+  padding-top: 2px;
+  flex-shrink: 0;
+  width: 32px;
+}
+.step-content {}
+.step-title {
+  font-size: 14px; font-weight: 500;
+  color: var(--text); margin-bottom: 5px;
+}
+.step-desc {
+  font-size: 13px; color: var(--text3); line-height: 1.65;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 36px 60px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+  position: relative; z-index: 1;
+}
+.footer-left {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--text3);
+}
+.footer-left strong { color: var(--gold); font-weight: 500; }
+.footer-right {
+  display: flex; gap: 20px;
+}
+.footer-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 1.5px;
+  color: var(--text3); text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.footer-link:hover { color: var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .hero, .section, footer { padding-left: 24px; padding-right: 24px; }
+  .hero-stats { gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-inner">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      ISO/IEC 27001:2022 · Compliance Toolkit
+    </div>
+
+    <h1>
+      Full Implementation<br>
+      <em>Checklist</em> & Audit Guide
+    </h1>
+
+    <p class="hero-desc">
+      A comprehensive, interactive implementation checklist covering all mandatory clauses (4–10)
+      and all 93 Annex A controls of the ISO/IEC 27001:2022 standard — with progress tracking,
+      gap notes, and export.
+    </p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-val">93</span>
+        <span class="stat-label">Annex A Controls</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">7</span>
+        <span class="stat-label">Mandatory Clauses</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">4</span>
+        <span class="stat-label">Control Themes</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">2022</span>
+        <span class="stat-label">Standard Edition</span>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <a href="iso27001-full-checklist_2__2_.html" class="btn-primary">
+        Open Checklist
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2.5 7H11.5M8 3.5L11.5 7L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="https://www.iso.org/standard/27001" target="_blank" rel="noopener" class="btn-secondary">
+        ISO Standard ↗
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FEATURES ── -->
+<div class="section">
+  <div class="section-label">Features</div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">☑</div>
+      <div class="feature-title">Interactive Checklist</div>
+      <div class="feature-desc">Click any item to mark it done. Real-time progress bars track completion per clause and globally.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon blue-icon">✎</div>
+      <div class="feature-title">Gap Notes & Remarks</div>
+      <div class="feature-desc">Every control has a remarks panel. Document gaps, non-conformities, corrective actions, and document references.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon green-icon">⬇</div>
+      <div class="feature-title">Export to Text</div>
+      <div class="feature-desc">Export all your remarks and references to a structured plain-text report, ready for audit packs or management review.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon purple-icon">⊞</div>
+      <div class="feature-title">Collapsible Sections</div>
+      <div class="feature-desc">Expand or collapse clauses and controls individually, or use Expand All / Collapse All for a quick overview.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">M·R·P</div>
+      <div class="feature-title">Requirement Tags</div>
+      <div class="feature-desc">Items are tagged as Mandatory, Recommended, or Procedural — so you can prioritise critical requirements first.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon blue-icon">⬡</div>
+      <div class="feature-title">No Installation</div>
+      <div class="feature-desc">100% client-side HTML. No server, no login, no data leaves your browser. Works offline after the first load.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── COVERAGE ── -->
+<div class="section">
+  <div class="section-label">Standard Coverage</div>
+  <div class="coverage-grid">
+    <div class="coverage-item">
+      <span class="cov-num">Clause 4</span>
+      <span class="cov-title">Context of the Organisation</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num">Clause 5</span>
+      <span class="cov-title">Leadership</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num">Clause 6</span>
+      <span class="cov-title">Planning</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num">Clause 7</span>
+      <span class="cov-title">Support</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num">Clause 8</span>
+      <span class="cov-title">Operation</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num">Clause 9</span>
+      <span class="cov-title">Performance Evaluation</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num">Clause 10</span>
+      <span class="cov-title">Improvement</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num blue">Annex A.5</span>
+      <span class="cov-title">Organisational Controls (37)</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num blue">Annex A.6</span>
+      <span class="cov-title">People Controls (8)</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num blue">Annex A.7</span>
+      <span class="cov-title">Physical Controls (14)</span>
+    </div>
+    <div class="coverage-item">
+      <span class="cov-num blue">Annex A.8</span>
+      <span class="cov-title">Technological Controls (34)</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── HOW TO USE ── -->
+<div class="section">
+  <div class="section-label">How to Use</div>
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">01</span>
+      <div class="step-content">
+        <div class="step-title">Open the Checklist</div>
+        <div class="step-desc">Click "Open Checklist" above. The tool runs entirely in your browser — no account or install required.</div>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">02</span>
+      <div class="step-content">
+        <div class="step-title">Work Through Each Clause</div>
+        <div class="step-desc">Expand clauses using the navigation pills or the section headers. Click items to mark them complete.</div>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">03</span>
+      <div class="step-content">
+        <div class="step-title">Document Gaps & Actions</div>
+        <div class="step-desc">Use the comment icon (✎) on each item to record gaps, non-conformities, or action references.</div>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">04</span>
+      <div class="step-content">
+        <div class="step-title">Export Your Remarks</div>
+        <div class="step-desc">Use the "Export Remarks" button to download a structured text file of all your notes for audit packs or management reports.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-left">
+    <strong>ISO/IEC 27001:2022</strong> &nbsp;·&nbsp; Full Implementation Checklist &nbsp;·&nbsp; All clauses &amp; 93 Annex A controls
+  </div>
+  <div class="footer-right">
+    <a href="iso27001-full-checklist_2__2_.html" class="footer-link">Checklist →</a>
+    <a href="https://www.iso.org/standard/27001" target="_blank" rel="noopener" class="footer-link">ISO.org →</a>
+  </div>
+</footer>
+
+</body>
+</html>
